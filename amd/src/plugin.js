@@ -16,7 +16,7 @@
 /**
  * Tiny AI for Moodle.
  *
- * @module      plugintype_pluginname/plugin
+ * @module      tiny_ai/plugin
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

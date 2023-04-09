@@ -16,26 +16,19 @@
 /**
  * Commands helper for the Moodle tiny_ai plugin.
  *
- * @module      plugintype_pluginname/commands
+ * @module      tiny_ai/commands
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import {getButtonImage} from 'editor_tiny/utils';
+import {displayModal} from 'tiny_ai/ui';
 import {get_string as getString} from 'core/str';
 import {
     component,
     icon,
 } from './common';
 
-/**
- * Handle the action for your plugin.
- * @param {TinyMCE.editor} editor The tinyMCE editor instance.
- */
-const handleAction = (editor) => {
-    // TODO Handle the action.
-    window.console.log(editor);
-};
 
 /**
  * Get the setup function for the buttons.
@@ -63,17 +56,16 @@ export const getSetup = async() => {
             icon,
             tooltip: buttonText,
             onAction: () => {
-                handleAction(editor);
+                displayModal(editor);
             },
         });
 
         // Register the menu item.
         editor.ui.registry.addMenuItem(component, {
             icon,
-            // TODO: Add shortcut.
             text: buttonText,
             onAction: () => {
-                handleAction(editor);
+                displayModal(editor);
             },
         });
 
