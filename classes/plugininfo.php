@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Tiny Tiny AI plugin for Moodle.
+ * Tiny AI plugin for Moodle.
  *
  * @package     tiny_ai
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>

@@ -16,26 +16,21 @@
 /**
  * Tiny tiny_ai for Moodle.
  *
- * @module      plugintype_pluginname/plugin
+ * @module      tiny_ai/configuration
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {
-} from './common';
-
+import {component as buttonName} from './common';
 import {
     addMenubarItem,
+    addToolbarButton,
 } from 'editor_tiny/utils';
 
-const getToolbarConfiguration = (instanceConfig) => {
-    let toolbar = instanceConfig.toolbar;
-
-    return toolbar;
-};
-
 export const configure = (instanceConfig) => {
+    // Update the instance configuration to add the ai option to the menus and toolbars.
     return {
-        toolbar: getToolbarConfiguration(instanceConfig),
+        toolbar: addToolbarButton(instanceConfig.toolbar, 'content', buttonName),
+        menu: addMenubarItem(instanceConfig.menu, 'insert', buttonName),
     };
 };

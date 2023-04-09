@@ -47,14 +47,35 @@ const handleAction = (editor) => {
  */
 export const getSetup = async() => {
     const [
+        buttonText,
         buttonImage,
     ] = await Promise.all([
+        getString('buttontitle', component),
         getButtonImage('icon', component),
     ]);
 
     return (editor) => {
         // Register the Moodle SVG as an icon suitable for use as a TinyMCE toolbar button.
         editor.ui.registry.addIcon(icon, buttonImage.html);
+
+        // Register the button.
+        editor.ui.registry.addToggleButton(component, {
+            icon,
+            tooltip: buttonText,
+            onAction: () => {
+                handleAction(editor);
+            },
+        });
+
+        // Register the menu item.
+        editor.ui.registry.addMenuItem(component, {
+            icon,
+            // TODO: Add shortcut.
+            text: buttonText,
+            onAction: () => {
+                handleAction(editor);
+            },
+        });
 
     };
 };

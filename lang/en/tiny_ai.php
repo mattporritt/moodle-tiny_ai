@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Tiny AI';
+$string['buttontitle'] = 'Add AI content';

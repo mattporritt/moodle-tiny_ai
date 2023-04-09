@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Tiny tiny_ai for Moodle.
+ * Tiny AI for Moodle.
  *
  * @module      plugintype_pluginname/plugin
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
@@ -27,6 +27,7 @@ import {getPluginMetadata} from 'editor_tiny/utils';
 import {component, pluginName} from './common';
 import {getSetup as getCommandSetup} from './commands';
 import * as Configuration from './configuration';
+
 
 // Setup the tiny_ai Plugin.
 export default new Promise(async(resolve) => {
