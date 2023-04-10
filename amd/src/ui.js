@@ -22,7 +22,9 @@
  */
 
 import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
 import AiModal from 'tiny_ai/modal';
+import Templates from 'core/templates';
 
 /**
  * Display the modal when the AI button is clicked.
@@ -31,7 +33,6 @@ import AiModal from 'tiny_ai/modal';
  */
 export const displayModal = async(editor) => {
     window.console.log(editor);
-    editor.insertContent('Hello world!');
 
     const modalPromises = await ModalFactory.create({
         type: AiModal.TYPE,
@@ -39,7 +40,26 @@ export const displayModal = async(editor) => {
         large: true,
     });
 
+    const loadingSpinner = await Templates.render('core/loading', {});
+
     modalPromises.show();
+    const modalroot = await modalPromises.getRoot();
+    const root = modalroot[0];
+    const currentForm = root.querySelector('form');
+
+    modalroot.on(ModalEvents.hidden, () => {
+        modalPromises.destroy();
+    });
+
+    root.addEventListener('click', (e) => {
+        const submitAction = e.target.closest('[data-action="generate"]');
+        if (submitAction) {
+            e.preventDefault();
+            modalPromises.setBody(loadingSpinner);
+            window.console.log(currentForm);
+            // TODO: Destroy the modal and call the AI service.
+        }
+    });
 };
 
 /**
