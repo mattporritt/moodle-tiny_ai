@@ -30,3 +30,5 @@ $string['buttontitle'] = 'Add AI content';
 $string['generate'] = 'Generate';
 $string['prompttext_label'] = 'Enter prompt text';
 $string['prompttext_placeholder'] = 'Example: write a short introduction for an undergraduate course on cloud computing';
+$string['responsetext_label'] = 'Generated response';
+$string['responsetext_placeholder'] = 'Generated response will appear here. First enter prompt text and press generate.';

@@ -44,18 +44,35 @@
     {{/title}}
 
     {{$body}}
-        <form class="mform" id="{{uniqid}}">
-            <div class="form-group">
-                <label for="{{elementid}}_tiny_ai_prompttext">
-                    {{#str}} prompttext_label, tiny_ai {{/str}}
-                </label>
-                <textarea
-                        class="form-control"
-                        id="{{elementid}}_tiny_ai_prompttext"
-                        rows="3"
-                        placeholder="{{#str}} prompttext_placeholder, tiny_ai {{/str}}"></textarea>
+        <div id="{{elementid}}_tiny_ai_spinner" class="tiny-ai-loading-spinner hidden">
+            <div class="spinner-border tiny-ai-spinner-style" role="status">
+                <span class="sr-only">Loading...</span>
             </div>
-        </form>
+        </div>
+        <div id="{{elementid}}_tiny_ai_blur" class="">
+            <div id="{{elementid}}_tiny_ai_overlay" class="tiny-ai-overlay hidden"></div>
+            <form class="mform" id="{{uniqid}}">
+                <div class="form-group">
+                    <label for="{{elementid}}_tiny_ai_prompttext">
+                        {{#str}} prompttext_label, tiny_ai {{/str}}
+                    </label>
+                    <textarea
+                            class="form-control"
+                            id="{{elementid}}_tiny_ai_prompttext"
+                            rows="3"
+                            placeholder="{{#str}} prompttext_placeholder, tiny_ai {{/str}}"></textarea>
+                    <label for="{{elementid}}_tiny_ai_responsetext">
+                        {{#str}} responsetext_label, tiny_ai {{/str}}
+                    </label>
+                    <textarea
+                            class="form-control"
+                            id="{{elementid}}_tiny_ai_responsetext"
+                            rows="3"
+                            placeholder="{{#str}} responsetext_placeholder, tiny_ai {{/str}}"
+                            disabled="disabled"></textarea>
+                </div>
+            </form>
+        </div>
     {{/body}}
 
     {{$footer}}

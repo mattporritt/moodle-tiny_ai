@@ -24,7 +24,6 @@
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import AiModal from 'tiny_ai/modal';
-import Templates from 'core/templates';
 
 /**
  * Display the modal when the AI button is clicked.
@@ -32,30 +31,34 @@ import Templates from 'core/templates';
  * @param {TinyMCE.editor} editor The tinyMCE editor instance.
  */
 export const displayModal = async(editor) => {
-    window.console.log(editor);
-
-    const modalPromises = await ModalFactory.create({
+    const modalObject = await ModalFactory.create({
         type: AiModal.TYPE,
         templateContext: getTemplateContext(editor),
         large: true,
     });
 
-    const loadingSpinner = await Templates.render('core/loading', {});
-
-    modalPromises.show();
-    const modalroot = await modalPromises.getRoot();
+    const modalroot = await modalObject.getRoot();
     const root = modalroot[0];
+
+    const loadingSpinnerDiv = root.querySelector('#' + editor.id + "_tiny_ai_spinner");
+    const overlayDiv = root.querySelector('#' + editor.id + '_tiny_ai_overlay');
+    const blurDiv = root.querySelector('#' + editor.id + '_tiny_ai_blur');
     const currentForm = root.querySelector('form');
 
+    modalObject.show();
     modalroot.on(ModalEvents.hidden, () => {
-        modalPromises.destroy();
+        modalObject.destroy();
     });
 
     root.addEventListener('click', (e) => {
         const submitAction = e.target.closest('[data-action="generate"]');
         if (submitAction) {
             e.preventDefault();
-            modalPromises.setBody(loadingSpinner);
+            loadingSpinnerDiv.classList.remove('hidden');
+            overlayDiv.classList.remove('hidden');
+            blurDiv.classList.add('tiny-ai-blur');
+            submitAction.value = 'Generating...';
+            submitAction.disabled = true;
             window.console.log(currentForm);
             // TODO: Destroy the modal and call the AI service.
         }
