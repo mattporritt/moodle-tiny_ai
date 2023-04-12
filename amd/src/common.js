@@ -16,7 +16,7 @@
 /**
  * Common values helper for the Moodle tiny_ai plugin.
  *
- * @module      plugintype_pluginname/common
+ * @module      tiny_ai/common
  * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

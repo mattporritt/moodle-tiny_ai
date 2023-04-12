@@ -25,14 +25,40 @@
 namespace tiny_ai;
 
 use context;
+use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
 
 class plugininfo extends plugin implements plugin_with_buttons {
 
+    /**
+     * Get a list of the buttons provided by this plugin.
+     *
+     * @return string[]
+     */
     public static function get_available_buttons(): array {
         return [
             'tiny_ai/plugin',
+        ];
+    }
+
+    /**
+     * Get extra configuration items to be passed to this plugin.
+     *
+     * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
+     * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param editor $editor The editor instance in which the plugin is initialised
+     * @return array
+     */
+    public static function get_plugin_configuration_for_context(
+            context $context,
+            array $options,
+            array $fpoptions,
+            ?editor $editor = null
+    ): array {
+        return [
+                'contextid' => $context->id,
         ];
     }
 }

@@ -24,6 +24,8 @@
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import AiModal from 'tiny_ai/modal';
+import {getContextId} from 'tiny_ai/options';
+import Ajax from 'core/ajax';
 
 /**
  * Display the modal when the AI button is clicked.
@@ -40,26 +42,16 @@ export const displayModal = async(editor) => {
     const modalroot = await modalObject.getRoot();
     const root = modalroot[0];
 
-    const loadingSpinnerDiv = root.querySelector('#' + editor.id + "_tiny_ai_spinner");
-    const overlayDiv = root.querySelector('#' + editor.id + '_tiny_ai_overlay');
-    const blurDiv = root.querySelector('#' + editor.id + '_tiny_ai_blur');
-    const currentForm = root.querySelector('form');
-
     modalObject.show();
     modalroot.on(ModalEvents.hidden, () => {
         modalObject.destroy();
     });
 
     root.addEventListener('click', (e) => {
-        const submitAction = e.target.closest('[data-action="generate"]');
-        if (submitAction) {
+        const submitBtn = e.target.closest('[data-action="generate"]');
+        if (submitBtn) {
             e.preventDefault();
-            loadingSpinnerDiv.classList.remove('hidden');
-            overlayDiv.classList.remove('hidden');
-            blurDiv.classList.add('tiny-ai-blur');
-            submitAction.value = 'Generating...';
-            submitAction.disabled = true;
-            window.console.log(currentForm);
+            handleSubmit(editor.id, root, submitBtn);
             // TODO: Destroy the modal and call the AI service.
         }
     });
@@ -76,4 +68,55 @@ const getTemplateContext = (editor) => {
     return {
         elementid: editor.id,
     };
+};
+
+/**
+ * Handle the submit action.
+ *
+ * @param {Integer} editorId The id of the editor.
+ * @param {Object} root The root element of the modal.
+ * @param {Object} submitBtn The submit button element.
+ */
+const handleSubmit = (editorId, root, submitBtn) => {
+    // Display the loading spinner.
+    displayLoading(editorId, root, submitBtn);
+
+    // Get the context id.
+    const contextId = getContextId(editorId);
+
+    // Pass the prompt text to the webservice using Ajax.
+    const request = {
+        methodname: 'tiny_ai_generate',
+        args: {
+            contextid: contextId,
+            prompttext: 'This is a test prompt',
+        }
+    };
+
+    Ajax.call([request])[0].then((response) => {
+
+    }).catch((error) => {
+        
+    });
+};
+
+/**
+ * Display the loading action in the modal.
+ *
+ * @param {Integer} editorId The id of the editor.
+ * @param {Object} root The root element of the modal.
+ * @param {Object} submitBtn The submit button element.
+ */
+const displayLoading = (editorId, root, submitBtn) => {
+    const loadingSpinnerDiv = root.querySelector('#' + editorId + "_tiny_ai_spinner");
+    const overlayDiv = root.querySelector('#' + editorId + '_tiny_ai_overlay');
+    const blurDiv = root.querySelector('#' + editorId + '_tiny_ai_blur');
+    const currentForm = root.querySelector('form');
+
+    loadingSpinnerDiv.classList.remove('hidden');
+    overlayDiv.classList.remove('hidden');
+    blurDiv.classList.add('tiny-ai-blur');
+    submitBtn.innerHTML = 'Generating...';
+    submitBtn.disabled = true;
+    window.console.log(currentForm);
 };
