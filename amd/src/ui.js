@@ -86,7 +86,7 @@ const handleSubmit = (editorId, root, submitBtn) => {
 
     // Pass the prompt text to the webservice using Ajax.
     const request = {
-        methodname: 'tiny_ai_generate',
+        methodname: 'tiny_ai_generate_content',
         args: {
             contextid: contextId,
             prompttext: 'This is a test prompt',
@@ -96,7 +96,7 @@ const handleSubmit = (editorId, root, submitBtn) => {
     Ajax.call([request])[0].then((response) => {
 
     }).catch((error) => {
-        
+
     });
 };
 
