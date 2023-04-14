@@ -31,6 +31,21 @@ namespace tiny_ai;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ai {
+    // API key.
+    private $apikey;
+
+    // API org id.
+    private $orgid;
+    
+    /**
+     * Class constructor.
+     */
+    public function __construct() {
+        // Get api key from config.
+        $this->apikey = get_config('tiny_ai', 'apikey');
+        // Get api org id from config.
+        $this->orgid = get_config('tiny_ai', 'orgid');
+    }
 
     /**
      * Generate content from the AI service.

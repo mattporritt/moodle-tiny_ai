@@ -28,8 +28,18 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('tiny_ai_settings', new lang_string('pluginname', 'tiny_ai'));
 
-    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ADMIN->fulltree) {
-        // TODO: Define actual plugin settings page and add it to the tree - {@link https://docs.moodle.org/dev/Admin_settings}.
+        // Setting to store OpenAI API key.
+        $settings->add(new admin_setting_configpasswordunmask('tiny_ai/apikey',
+            new lang_string('apikey', 'tiny_ai'),
+            new lang_string('apikey_desc', 'tiny_ai'),
+            ''));
+
+        // Setting to store OpenAI organization ID.
+        $settings->add(new admin_setting_configtext('tiny_ai/orgid',
+            new lang_string('orgid', 'tiny_ai'),
+            new lang_string('orgid_desc', 'tiny_ai'),
+            '',
+            PARAM_TEXT));
     }
 }

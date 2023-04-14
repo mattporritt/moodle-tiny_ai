@@ -27,8 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Tiny AI';
 $string['ai:use'] = 'Generate AI content using Tiny AI';
+$string['apikey'] = 'OpenAI API key';
+$string['apikey_desc'] = 'Enter your OpenAI API key. You can get one from https://platform.openai.com/account/api-keys';
 $string['buttontitle'] = 'Add AI content';
 $string['generate'] = 'Generate';
+$string['orgid'] = 'OpenAI organization ID';
+$string['orgid_desc'] = 'Enter your OpenAI organization ID. You can get one from https://platform.openai.com/account/org-settings';
 $string['prompttext_label'] = 'Enter prompt text';
 $string['prompttext_placeholder'] = 'Example: write a short introduction for an undergraduate course on cloud computing';
 $string['responsetext_label'] = 'Generated response';
