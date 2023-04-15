@@ -41,5 +41,23 @@ if ($hassiteconfig) {
             new lang_string('orgid_desc', 'tiny_ai'),
             '',
             PARAM_TEXT));
+
+        // Array of personality options.
+        $personalityoptions = array(
+            0 => new lang_string('personality_undergrad', 'tiny_ai'),
+            1 => new lang_string('personality_postgrad', 'tiny_ai'),
+            2 => new lang_string('personality_teachassist', 'tiny_ai'),
+            3 => new lang_string('personality_highschool', 'tiny_ai'),
+            4 => new lang_string('personality_primaryschool', 'tiny_ai'),
+            5 => new lang_string('personality_industry', 'tiny_ai'),
+            6 => new lang_string('personality_mentor', 'tiny_ai'),
+        );
+
+        // Setting to store personality.
+        $settings->add(new admin_setting_configselect('tiny_ai/personality',
+            new lang_string('personality', 'tiny_ai'),
+            new lang_string('personality_desc', 'tiny_ai'),
+            0,
+            $personalityoptions));
     }
 }

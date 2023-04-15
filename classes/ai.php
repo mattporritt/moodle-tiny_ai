@@ -24,6 +24,8 @@
 
 namespace tiny_ai;
 
+use core\http_client;
+
 /**
  * Process AI API calls and generate content responses.
  *
@@ -36,7 +38,30 @@ class ai {
 
     // API org id.
     private $orgid;
-    
+
+    // API endpoint.
+    private $aiendpoint = 'https://api.openai.com/v1/chat/completions';
+
+    // HTTP Client.
+    private $client;
+
+    // AI model.
+    private $model = 'gpt-4-32k';
+
+    // AI "personality" options.
+    private $personalityoptions =[
+        0 => 'You are an undergraduate Lecturer at a univeristy',
+        1 => 'You are a postgraduate Lecturer at a university',
+        2 => 'You are a teaching assistant at a university',
+        3 => 'You are a high school teacher',
+        4 => 'You are a primary school teacher',
+        5 => 'You are an industry professional',
+        6 => 'You are a student mentor',
+    ];
+
+    // AI personality.
+    private $personality;
+
     /**
      * Class constructor.
      */
@@ -45,17 +70,64 @@ class ai {
         $this->apikey = get_config('tiny_ai', 'apikey');
         // Get api org id from config.
         $this->orgid = get_config('tiny_ai', 'orgid');
+        // Get personality from config.
+        $this->personality = $this->personalityoptions[get_config('tiny_ai', 'personality')];
+        // Create http client.
+        $this->client = new http_client([
+            'baseuri' => $this->aiendpoint,
+            'headers' => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $this->apikey,
+                'OpenAI-Organization: ' . $this->orgid,
+            ]
+        ]);
     }
 
     /**
      * Generate content from the AI service.
      *
-     * @since  Moodle 4.2
      * @param string $prompttext The prompt text.
+     * @param ?http_client $client The http client.
      * @return string The generated content.
      */
-    public static function generate_content($prompttext) {
+    public function generate_content(string $prompttext, ?http_client $client = null): string {
+        // Allow for dependency injection of http client.
+        if ($client) {
+            $this->client = $client;
+        }
+
+        // Create the AI request object.
+        $requestjson = json_encode($this->generate_request_object($prompttext));
+
+        // Call the AI service.
+        $response = $this->client->request('POST', '', [
+            'body' => $requestjson,
+        ]);
+
+        error_log(print_r($response, true));
 
         return $prompttext;
+    }
+
+    /**
+     * Generate request object ready to send to the AI service.
+     *
+     * @param string $prompttext The prompt text.
+     */
+    private function generate_request_object(string $prompttext): \stdClass {
+        // Create the AI request object.
+        $systemobj = new \stdClass();
+        $systemobj->role = 'system';
+        $systemobj->content = $this->personality;
+
+        $userobj = new \stdClass();
+        $userobj->role = 'user';
+        $userobj->content = $prompttext;
+
+        $requestobj = new \stdClass();
+        $requestobj->model = $this->model;
+        $requestobj->messages = [$systemobj, $userobj];
+
+        return $requestobj;
     }
 }
