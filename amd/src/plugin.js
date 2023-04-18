@@ -27,7 +27,7 @@ import {getPluginMetadata} from 'editor_tiny/utils';
 import {component, pluginName} from './common';
 import {getSetup as getCommandSetup} from './commands';
 import * as Configuration from './configuration';
-import * as Options from 'tiny_link/options';
+import * as Options from 'tiny_ai/options';
 
 
 // Setup the tiny_ai Plugin.

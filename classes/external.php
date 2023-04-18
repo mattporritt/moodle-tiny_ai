@@ -26,6 +26,7 @@ namespace tiny_ai;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
+use core_external\external_single_structure;
 use core_external\external_value;
 
 /**
@@ -42,12 +43,16 @@ class external extends external_api {
      * @since  Moodle 4.2
      * @return external_function_parameters
      */
-    public static function generate_content_parameters() {
+    public static function generate_content_parameters(): external_function_parameters {
         return new external_function_parameters(
                 [
-                    'jsondata' => new external_value(
+                    'contextid' => new external_value(
+                            PARAM_INT,
+                            'The context ID',
+                            VALUE_REQUIRED),
+                    'prompttext' => new external_value(
                             PARAM_RAW,
-                            'The data encoded as a json array',
+                            'The prompt text for the AI service',
                             VALUE_REQUIRED),
                 ]
         );
@@ -57,23 +62,23 @@ class external extends external_api {
      * Generate content from the AI service.
      *
      * @since  Moodle 4.2
-     * @param string $jsondata The data encoded as a json array.
+     * @param int $contextid The context ID.
+     * @param string $prompttext The data encoded as a json array.
      * @return string
      */
-    public static function generate_content(string $jsondata) {
+    public static function generate_content(int $contextid, string $prompttext): array {
         \core\session\manager::write_close(); // Close session early this is a read op.
-
         // Parameter validation.
-        self::validate_parameters(
-                self::generate_content_parameters(),
-                array('jsondata' => $jsondata)
-        );
-
-        $data = json_decode($jsondata, true);
-
+        [
+            'contextid' => $contextid,
+            'prompttext' => $prompttext
+        ] = self::validate_parameters(self::generate_content_parameters(), [
+                'contextid' => $contextid,
+                'prompttext' => $prompttext
+        ]);
         // Context validation and permission check.
         // Get the context from the passed in ID.
-        $context = \context::instance_by_id($data['contextid']);
+        $context = \context::instance_by_id($contextid);
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
@@ -81,18 +86,24 @@ class external extends external_api {
 
         // Execute API call.
         $ai = new \tiny_ai\ai();
-        $contentresponse= $ai->generate_content($data['prompttext']);
+        $contentresponse= $ai->generate_content($prompttext);
 
-        return json_encode($contentresponse);
+        return [
+            'contentresponse' => $contentresponse,
+        ];
     }
 
     /**
      * Generate content return value.
      *
      * @since  Moodle 4.2
-     * @return external_value
+     * @return external_single_structure
      */
-    public static function generate_content_returns() {
-        return new external_value(PARAM_RAW, 'Event JSON');
+    public static function generate_content_returns(): external_single_structure {
+        return new external_single_structure([
+                'contentresponse' => new external_value(
+                        PARAM_RAW,
+                        'AI generated content'),
+        ]);
     }
 }

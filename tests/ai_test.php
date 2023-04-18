@@ -26,7 +26,7 @@ namespace tiny_ai;
  *
  * @coversDefaultClass \tiny_ai\ai
  */
-class ai_testcase extends \advanced_testcase {
+class ai_test extends \advanced_testcase {
 
     /**
      * Test the generate content function.
@@ -35,7 +35,9 @@ class ai_testcase extends \advanced_testcase {
      * @return void
      */
     public function test_generate_content() {
-        $prompttext = 'This is a test prompt.';
+        $prompttext = 'Provide a brief introduction to a cloud computing course.';
+        set_config('apikey', '', 'tiny_ai');
+        set_config('orgid', '', 'tiny_ai');
 
         $ai = new ai();
         $result = $ai->generate_content($prompttext);

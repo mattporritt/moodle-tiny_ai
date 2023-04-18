@@ -46,7 +46,7 @@ class ai {
     private $client;
 
     // AI model.
-    private $model = 'gpt-4-32k';
+    private $model = 'gpt-4';
 
     // AI "personality" options.
     private $personalityoptions =[
@@ -74,11 +74,11 @@ class ai {
         $this->personality = $this->personalityoptions[get_config('tiny_ai', 'personality')];
         // Create http client.
         $this->client = new http_client([
-            'baseuri' => $this->aiendpoint,
+            'base_uri' => $this->aiendpoint,
             'headers' => [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $this->apikey,
-                'OpenAI-Organization: ' . $this->orgid,
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->apikey,
+                'OpenAI-Organization' => $this->orgid,
             ]
         ]);
     }
@@ -100,11 +100,13 @@ class ai {
         $requestjson = json_encode($this->generate_request_object($prompttext));
 
         // Call the AI service.
-        $response = $this->client->request('POST', '', [
-            'body' => $requestjson,
-        ]);
-
-        error_log(print_r($response, true));
+        //$response = $this->client->request('POST', '', [
+        //    'body' => $requestjson,
+        //]);
+        //
+        //$responsebody = $response->getBody();
+        //
+        //error_log(print_r($responsebody->getContents(), true));
 
         return $prompttext;
     }
