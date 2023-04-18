@@ -24,7 +24,7 @@
 import {getPluginOptionName} from 'editor_tiny/options';
 import {pluginName} from 'tiny_ai/common';
 
-const contextIdVal = getPluginOptionName(pluginName, 'contextid');
+const contextIdName = getPluginOptionName(pluginName, 'contextid');
 
 /**
  * Options registration function.
@@ -34,8 +34,9 @@ const contextIdVal = getPluginOptionName(pluginName, 'contextid');
 export const register = (editor) => {
     const registerOption = editor.options.register;
 
-    registerOption(contextIdVal, {
+    registerOption(contextIdName, {
         processor: 'number',
+        "default": 0,
     });
 };
 
@@ -45,4 +46,5 @@ export const register = (editor) => {
  * @param {tinyMCE} editor The editor instance to fetch the value for
  * @returns {object} The value of the myFirstProperty option
  */
-export const getContextId = (editor) => editor.options.get(contextIdVal);
+export const getContextId = (editor) => editor.options.get(contextIdName);
+

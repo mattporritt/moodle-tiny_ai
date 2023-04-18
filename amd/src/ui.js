@@ -51,7 +51,7 @@ export const displayModal = async(editor) => {
         const submitBtn = e.target.closest('[data-action="generate"]');
         if (submitBtn) {
             e.preventDefault();
-            handleSubmit(editor.id, root, submitBtn);
+            handleSubmit(editor, root, submitBtn);
             // TODO: Destroy the modal and call the AI service.
         }
     });
@@ -73,16 +73,18 @@ const getTemplateContext = (editor) => {
 /**
  * Handle the submit action.
  *
- * @param {Integer} editorId The id of the editor.
+ * @param {TinyMCE.editor} editor The tinyMCE editor instance.
  * @param {Object} root The root element of the modal.
  * @param {Object} submitBtn The submit button element.
  */
-const handleSubmit = (editorId, root, submitBtn) => {
+const handleSubmit = async(editor, root, submitBtn) => {
     // Display the loading spinner.
-    displayLoading(editorId, root, submitBtn);
+    displayLoading(editor.id, root, submitBtn);
 
     // Get the context id.
-    const contextId = getContextId(editorId);
+    const contextId = getContextId(editor);
+    window.console.log(contextId);
+    window.console.log('context id is ' + contextId);
 
     // Pass the prompt text to the webservice using Ajax.
     const request = {
@@ -93,11 +95,14 @@ const handleSubmit = (editorId, root, submitBtn) => {
         }
     };
 
-    Ajax.call([request])[0].then((response) => {
+    // Try making the ajax call and catch any errors.
+    try {
+        const response = await Ajax.call([request])[0];
+        window.console.log(response);
+    } catch (error) {
+        window.console.log(error);
+    }
 
-    }).catch((error) => {
-
-    });
 };
 
 /**
