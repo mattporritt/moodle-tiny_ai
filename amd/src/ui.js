@@ -169,7 +169,15 @@ const handleInsert = async(editor, root) => {
     // Update the generated response with the content from the form.
     // In case the user has edited the response.
     const generatedResponseEl = root.querySelector('#' + editor.id + '_tiny_ai_responsetext');
-    responseObj.generatedcontent = generatedResponseEl.value;
+    // Replace double line breaks with </p><p> for paragraphs
+    const text = generatedResponseEl.value;
+    const textWithParagraphs = text.replace(/\n{2,}/g, '</p><p>');
+
+    // Replace remaining single line breaks with <br> tags
+    const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br>');
+
+    // Add opening and closing <p> tags to wrap the entire content
+    responseObj.generatedcontent = `<p>${textWithBreaks}</p>`;
 
     // Generate the HTML for the response.
     const formattedResponse = await Templates.render('tiny_ai/insert', responseObj);
