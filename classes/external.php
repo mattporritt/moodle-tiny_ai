@@ -86,11 +86,7 @@ class external extends external_api {
 
         // Execute API call.
         $ai = new \tiny_ai\ai();
-        $contentresponse= $ai->generate_content($prompttext);
-
-        return [
-            'contentresponse' => $contentresponse,
-        ];
+        return $ai->generate_content($prompttext);
     }
 
     /**
@@ -99,9 +95,21 @@ class external extends external_api {
      * @since  Moodle 4.2
      * @return external_single_structure
      */
-    public static function generate_content_returns(): external_single_structure {
-        return new external_single_structure([
-                'contentresponse' => new external_value(
+    public static function generate_content_returns(): external_function_parameters {
+        return new external_function_parameters([
+                'prompttext' => new external_value(
+                        PARAM_RAW,
+                        'Original prompt text'),
+                'model' => new external_value(
+                        PARAM_ALPHANUMEXT,
+                        'AI model used'),
+                'personality' => new external_value(
+                        PARAM_ALPHANUMEXT,
+                        'AI personality used'),
+                'generateddate' => new external_value(
+                        PARAM_INT,
+                        'Date AI content was generated'),
+                'generatedcontent' => new external_value(
                         PARAM_RAW,
                         'AI generated content'),
         ]);

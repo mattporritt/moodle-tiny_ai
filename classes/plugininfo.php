@@ -28,8 +28,9 @@ use context;
 use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
+use editor_tiny\plugin_with_configuration;
 
-class plugininfo extends plugin implements plugin_with_buttons {
+class plugininfo extends plugin implements plugin_with_configuration, plugin_with_buttons {
 
     /**
      * Get a list of the buttons provided by this plugin.

@@ -29,12 +29,7 @@
 
     Example context (json):
     {
-        "elementid": "exampleId",
-        "setLinkOnElement": false,
-        "showfilepicker": true,
-        "urltext": "Abc",
-        "url": "https://moodle.org/",
-        "newwindow": false
+        "elementid": "exampleId"
     }
 }}
 {{< core/modal }}
@@ -85,6 +80,12 @@
                 class="btn btn-primary"
                 data-action="generate">
             {{#str}} generate, tiny_ai{{/str}}
+        </button>
+        <button id="{{elementid}}_tiny_ai_insertbutton"
+                type="button"
+                class="btn btn-primary hidden"
+                data-action="inserter">
+            {{#str}} insert, tiny_ai{{/str}}
         </button>
     {{/footer}}
 

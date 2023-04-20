@@ -50,7 +50,7 @@ class ai {
 
     // AI "personality" options.
     private $personalityoptions =[
-        0 => 'You are an undergraduate Lecturer at a univeristy',
+        0 => 'You are an undergraduate Lecturer at a university',
         1 => 'You are a postgraduate Lecturer at a university',
         2 => 'You are a teaching assistant at a university',
         3 => 'You are a high school teacher',
@@ -97,16 +97,23 @@ class ai {
         }
 
         // Create the AI request object.
-        $requestjson = json_encode($this->generate_request_object($prompttext));
-
-        // Call the AI service.
+        //$requestjson = json_encode($this->generate_request_object($prompttext));
+        //
+        //// Call the AI service.
         //$response = $this->client->request('POST', '', [
         //    'body' => $requestjson,
         //]);
         //
         //$responsebody = $response->getBody();
         //
-        //error_log(print_r($responsebody->getContents(), true));
+        //return $responsebody->getContents();
+
+        $responseobj = new \stdClass();
+        $responseobj->prompttext = $prompttext;
+        $responseobj->model = $this->model;
+        $responseobj->personality = $this->personality;
+        $responseobj->generateddate = time();
+        $responseobj->generatedcontent = 'placeholder response';
 
         return $prompttext;
     }
