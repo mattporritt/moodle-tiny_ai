@@ -88,9 +88,9 @@ class ai {
      *
      * @param string $prompttext The prompt text.
      * @param ?http_client $client The http client.
-     * @return string The generated content.
+     * @return \stdClass The generated content.
      */
-    public function generate_content(string $prompttext, ?http_client $client = null): string {
+    public function generate_content(string $prompttext, ?http_client $client = null): \stdClass {
         // Allow for dependency injection of http client.
         if ($client) {
             $this->client = $client;
@@ -115,7 +115,7 @@ class ai {
         $responseobj->generateddate = time();
         $responseobj->generatedcontent = 'placeholder response';
 
-        return $prompttext;
+        return $responseobj;
     }
 
     /**

@@ -28,6 +28,8 @@ import {getContextId} from 'tiny_ai/options';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 
+let responseObj = null;
+
 /**
  * Display the modal when the AI button is clicked.
  *
@@ -104,14 +106,14 @@ const handleSubmit = async(editor, root, submitBtn) => {
 
     // Try making the ajax call and catch any errors.
     try {
-        const response = await Ajax.call([request])[0];
+        responseObj = await Ajax.call([request])[0];
         const generatedResponseEl = root.querySelector('#' + editor.id + '_tiny_ai_responsetext');
         const insertBtn = root.querySelector('[data-action="inserter"]');
-        generatedResponseEl.innerHTML = response.contentresponse;
+        generatedResponseEl.innerHTML = responseObj.generatedcontent;
         generatedResponseEl.disabled = false;
         hideLoading(editor.id, root, submitBtn);
         insertBtn.classList.remove('hidden');
-        window.console.log(response);
+
     } catch (error) {
         window.console.log(error);
         // TODO: Display error message in modal.
@@ -130,14 +132,12 @@ const displayLoading = (editorId, root, submitBtn) => {
     const loadingSpinnerDiv = root.querySelector('#' + editorId + "_tiny_ai_spinner");
     const overlayDiv = root.querySelector('#' + editorId + '_tiny_ai_overlay');
     const blurDiv = root.querySelector('#' + editorId + '_tiny_ai_blur');
-    const currentForm = root.querySelector('form');
 
     loadingSpinnerDiv.classList.remove('hidden');
     overlayDiv.classList.remove('hidden');
     blurDiv.classList.add('tiny-ai-blur');
     submitBtn.innerHTML = 'Generating...';
     submitBtn.disabled = true;
-    window.console.log(currentForm);
 };
 
 /**
@@ -151,14 +151,12 @@ const hideLoading = (editorId, root, submitBtn) => {
     const loadingSpinnerDiv = root.querySelector('#' + editorId + "_tiny_ai_spinner");
     const overlayDiv = root.querySelector('#' + editorId + '_tiny_ai_overlay');
     const blurDiv = root.querySelector('#' + editorId + '_tiny_ai_blur');
-    const currentForm = root.querySelector('form');
 
     loadingSpinnerDiv.classList.add('hidden');
     overlayDiv.classList.add('hidden');
     blurDiv.classList.remove('tiny-ai-blur');
     submitBtn.innerHTML = 'Regenerate';
     submitBtn.disabled = false;
-    window.console.log(currentForm);
 };
 
 /**
@@ -168,9 +166,15 @@ const hideLoading = (editorId, root, submitBtn) => {
  * @param {Object} root The root element of the modal.
  */
 const handleInsert = async(editor, root) => {
+    // Update the generated response with the content from the form.
+    // In case the user has edited the response.
     const generatedResponseEl = root.querySelector('#' + editor.id + '_tiny_ai_responsetext');
-    const generatedResponse = generatedResponseEl.value;
-    const formattedResponse = await Templates.render('tiny_ai/insert', {content: generatedResponse});
+    responseObj.generatedcontent = generatedResponseEl.value;
+
+    // Generate the HTML for the response.
+    const formattedResponse = await Templates.render('tiny_ai/insert', responseObj);
+
+    // Insert the response into the editor.
     editor.insertContent(formattedResponse);
     editor.execCommand('mceRepaint');
     editor.windowManager.close();

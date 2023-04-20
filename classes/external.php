@@ -86,7 +86,7 @@ class external extends external_api {
 
         // Execute API call.
         $ai = new \tiny_ai\ai();
-        return $ai->generate_content($prompttext);
+        return (array)$ai->generate_content($prompttext);
     }
 
     /**
@@ -104,7 +104,7 @@ class external extends external_api {
                         PARAM_ALPHANUMEXT,
                         'AI model used'),
                 'personality' => new external_value(
-                        PARAM_ALPHANUMEXT,
+                        PARAM_TEXT,
                         'AI personality used'),
                 'generateddate' => new external_value(
                         PARAM_INT,
