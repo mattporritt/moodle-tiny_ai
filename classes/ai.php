@@ -34,22 +34,22 @@ use core\http_client;
  */
 class ai {
     // API key.
-    private $apikey;
+    private string $apikey;
 
     // API org id.
-    private $orgid;
+    private string $orgid;
 
     // API endpoint.
-    private $aiendpoint = 'https://api.openai.com/v1/chat/completions';
+    private string $aiendpoint = 'https://api.openai.com/v1/chat/completions';
 
     // HTTP Client.
-    private $client;
+    private http_client $client;
 
     // AI model.
-    private $model = 'gpt-4';
+    private string $model = 'gpt-4';
 
     // AI "personality" options.
-    private $personalityoptions =[
+    private array $personalityoptions =[
         0 => 'You are an undergraduate Lecturer at a university',
         1 => 'You are a postgraduate Lecturer at a university',
         2 => 'You are a teaching assistant at a university',
@@ -60,7 +60,7 @@ class ai {
     ];
 
     // AI personality.
-    private $personality;
+    private string $personality;
 
     /**
      * Class constructor.
@@ -97,23 +97,22 @@ class ai {
         }
 
         // Create the AI request object.
-        //$requestjson = json_encode($this->generate_request_object($prompttext));
-        //
-        //// Call the AI service.
-        //$response = $this->client->request('POST', '', [
-        //    'body' => $requestjson,
-        //]);
-        //
-        //$responsebody = $response->getBody();
-        //
-        //return $responsebody->getContents();
+        $requestjson = json_encode($this->generate_request_object($prompttext));
+
+        // Call the AI service.
+        $response = $this->client->request('POST', '', [
+            'body' => $requestjson,
+        ]);
+
+        $responsebody = $response->getBody();
+        $bodyobj = json_decode($responsebody->getContents());
 
         $responseobj = new \stdClass();
         $responseobj->prompttext = $prompttext;
         $responseobj->model = $this->model;
         $responseobj->personality = $this->personality;
         $responseobj->generateddate = time();
-        $responseobj->generatedcontent = 'placeholder response';
+        $responseobj->generatedcontent = $bodyobj->choices[0]->message->content;
 
         return $responseobj;
     }

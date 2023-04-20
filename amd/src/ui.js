@@ -109,7 +109,7 @@ const handleSubmit = async(editor, root, submitBtn) => {
         responseObj = await Ajax.call([request])[0];
         const generatedResponseEl = root.querySelector('#' + editor.id + '_tiny_ai_responsetext');
         const insertBtn = root.querySelector('[data-action="inserter"]');
-        generatedResponseEl.innerHTML = responseObj.generatedcontent;
+        generatedResponseEl.value = responseObj.generatedcontent;
         generatedResponseEl.disabled = false;
         hideLoading(editor.id, root, submitBtn);
         insertBtn.classList.remove('hidden');
