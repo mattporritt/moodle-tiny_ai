@@ -27,6 +27,7 @@ import AiModal from 'tiny_ai/modal';
 import {getContextId} from 'tiny_ai/options';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
+import {wrapEditedSections} from 'tiny_ai/textmark';
 
 let responseObj = null;
 
@@ -169,9 +170,13 @@ const handleInsert = async(editor, root) => {
     // Update the generated response with the content from the form.
     // In case the user has edited the response.
     const generatedResponseEl = root.querySelector('#' + editor.id + '_tiny_ai_responsetext');
+
+    // Wrap the edited sections in the response with tags.
+    // This is so we can differentiate between the edited sections and the generated content.
+    const wrappedEditedResponse = await wrapEditedSections(responseObj.generatedcontent, generatedResponseEl.value);
+
     // Replace double line breaks with </p><p> for paragraphs
-    const text = generatedResponseEl.value;
-    const textWithParagraphs = text.replace(/\n{2,}/g, '</p><p>');
+    const textWithParagraphs = wrappedEditedResponse.replace(/\n{2,}/g, '</p><p>');
 
     // Replace remaining single line breaks with <br> tags
     const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br>');

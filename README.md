@@ -1,6 +1,7 @@
 # Tiny AI #
 
-TODO Describe the plugin shortly here.
+## Introduction ##
+This plugin provides a button in the TinyMCE editor to insert AI generated content.
 
 TODO Provide more detailed description here.
 
