@@ -1,9 +1,28 @@
-# Tiny AI #
 
-## Introduction ##
-This plugin provides a button in the TinyMCE editor to insert AI generated content.
+# Tiny AI Plugin for Moodle LMS #
 
-TODO Provide more detailed description here.
+The Tiny AI Plugin is a Moodle LMS plugin that enhances the TinyMCE editor by enabling the insertion of AI-generated text directly from the editor. 
+Users can edit and regenerate the AI-generated response before it is inserted into their content. 
+
+The plugin also features administration settings for entering the AI API key and organization key, as well as the ability to restrict plugin usage based on Moodle capabilities.
+
+## Table of Contents ##
+
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [License](#license)
+
+## Features ##
+
+- Integration with the TinyMCE editor in Moodle LMS
+- Insertion of AI-generated text
+- Editing and regeneration of AI-generated responses
+- Administration settings for entering AI API key and organization key
+- Restrict usage based on Moodle capabilities
+
+## Installation
 
 ## Installing via uploaded ZIP file ##
 
@@ -27,6 +46,30 @@ Alternatively, you can run
     $ php admin/cli/upgrade.php
 
 to complete the installation from the command line.
+
+## Configuration
+
+To configure the plugin, follow these steps:
+
+1. Navigate to `Site administration > Plugins > Text editors > TinyMCE HTML editor > Tiny AI Plugin`.
+2. Enter the AI API key and organization key in the respective fields.
+3. Save the settings.
+
+To restrict plugin usage based on Moodle capabilities, follow these steps:
+
+1. Navigate to `Site administration > Users > Permissions > Define roles`.
+2. Select the desired role to edit.
+3. Under the "Advanced" tab, search for the `tiny/ai:use` capability.
+4. Check or uncheck the box next to the `tiny/ai:use` capability to enable or disable the feature for that role.
+5. Save the changes.
+
+## Usage
+
+1. Create or edit a Moodle activity or resource that uses the TinyMCE editor.
+2. Click on the "Tiny AI" icon in the editor's toolbar.
+3. The AI-generated text will be displayed in a modal window.
+4. Edit the text as desired, or click "Regenerate" to request a new AI-generated response.
+5. Click "Insert" to add the AI-generated text to your content.
 
 ## License ##
 

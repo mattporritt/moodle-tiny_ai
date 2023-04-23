@@ -28,9 +28,9 @@
 /**
  * Finds the longest common subsequence of two strings.
  *
- * @param {string} a - The first string.
- * @param {string} b - The second string.
- * @returns {string} - The longest common subsequence.
+ * @param {string} a The first string.
+ * @param {string} b The second string.
+ * @returns {string} The longest common subsequence.
  */
 function longestCommonSubsequence(a, b) {
     const lengths = Array(a.length + 1)
@@ -69,9 +69,9 @@ function longestCommonSubsequence(a, b) {
 /**
  * Finds the differences between the original and edited text using the LCS algorithm.
  *
- * @param {string} originalText - The original text.
- * @param {string} editedText - The edited text.
- * @returns {Array<Object>} - An array of difference objects with start, end, and text properties.
+ * @param {string} originalText The original text.
+ * @param {string} editedText The edited text.
+ * @returns {Array<Object>} An array of difference objects with start, end, and text properties.
  */
 function findDifferences(originalText, editedText) {
     const lcs = longestCommonSubsequence(originalText, editedText);
@@ -109,8 +109,8 @@ function findDifferences(originalText, editedText) {
 /**
  * Wraps the given edited section in a span tag with a 'user-edited' class.
  *
- * @param {string} editedSection - The edited section of the text.
- * @returns {Promise<string>} - A promise that resolves with the wrapped edited section.
+ * @param {string} editedSection The edited section of the text.
+ * @returns {Promise<string>} A promise that resolves with the wrapped edited section.
  */
 export function wrapInSpan(editedSection) {
     return new Promise((resolve, reject) => {
@@ -126,9 +126,9 @@ export function wrapInSpan(editedSection) {
 /**
  * Wraps the edited sections of the text in span tags with a 'user-edited' class.
  *
- * @param {string} originalText - The original text.
- * @param {string} editedText - The edited text.
- * @returns {Promise<string>} - A promise that resolves with the edited text, where edited sections are wrapped in span tags.
+ * @param {string} originalText The original text.
+ * @param {string} editedText The edited text.
+ * @returns {Promise<string>} A promise that resolves with the edited text, where edited sections are wrapped in span tags.
  */
 export function wrapEditedSections(originalText, editedText) {
     return new Promise(async(resolve, reject) => {
