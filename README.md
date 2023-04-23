@@ -12,6 +12,7 @@ The plugin also features administration settings for entering the AI API key and
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [AI Acknowledgement](#ai-acknowledgement)
 - [License](#license)
 
 ## Features ##
@@ -70,6 +71,9 @@ To restrict plugin usage based on Moodle capabilities, follow these steps:
 3. The AI-generated text will be displayed in a modal window.
 4. Edit the text as desired, or click "Regenerate" to request a new AI-generated response.
 5. Click "Insert" to add the AI-generated text to your content.
+
+## AI Acknowledgement ##
+Parts of this plugin were developed using ChatGPT and Github Copilot.
 
 ## License ##
 
