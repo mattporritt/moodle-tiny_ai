@@ -26,10 +26,91 @@
 
 
 /**
+ * Finds the longest common subsequence of two strings.
+ *
+ * @param {string} a - The first string.
+ * @param {string} b - The second string.
+ * @returns {string} - The longest common subsequence.
+ */
+function longestCommonSubsequence(a, b) {
+    const lengths = Array(a.length + 1)
+        .fill(null)
+        .map(() => Array(b.length + 1).fill(0));
+
+    for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < b.length; j++) {
+            if (a[i] === b[j]) {
+                lengths[i + 1][j + 1] = lengths[i][j] + 1;
+            } else {
+                lengths[i + 1][j + 1] = Math.max(lengths[i + 1][j], lengths[i][j + 1]);
+            }
+        }
+    }
+
+    let i = a.length;
+    let j = b.length;
+    let lcs = '';
+
+    while (i > 0 && j > 0) {
+        if (a[i - 1] === b[j - 1]) {
+            lcs = a[i - 1] + lcs;
+            i--;
+            j--;
+        } else if (lengths[i - 1][j] > lengths[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+
+    return lcs;
+}
+
+/**
+ * Finds the differences between the original and edited text using the LCS algorithm.
+ *
+ * @param {string} originalText - The original text.
+ * @param {string} editedText - The edited text.
+ * @returns {Array<Object>} - An array of difference objects with start, end, and text properties.
+ */
+function findDifferences(originalText, editedText) {
+    const lcs = longestCommonSubsequence(originalText, editedText);
+    let differences = [];
+    let i = 0;
+    let j = 0;
+
+    for (let k = 0; k < lcs.length; k++) {
+        let commonChar = lcs[k];
+
+        while (originalText[i] !== commonChar || editedText[j] !== commonChar) {
+            let start = j;
+            while (editedText[j] !== commonChar) {
+                j++;
+            }
+            let editedSection = editedText.slice(start, j);
+            differences.push({start, end: j, text: editedSection});
+
+            while (originalText[i] !== commonChar) {
+                i++;
+            }
+        }
+
+        i++;
+        j++;
+    }
+
+    if (j < editedText.length) {
+        differences.push({start: j, end: editedText.length, text: editedText.slice(j)});
+    }
+
+    return differences;
+}
+
+/**
  * Wraps the given edited section in a span tag with a 'user-edited' class.
  *
- * @param {string} editedSection The edited section of the text.
- * @returns {Promise<string>} A promise that resolves with the wrapped edited section.
+ * @param {string} editedSection - The edited section of the text.
+ * @returns {Promise<string>} - A promise that resolves with the wrapped edited section.
  */
 export function wrapInSpan(editedSection) {
     return new Promise((resolve, reject) => {
@@ -43,44 +124,14 @@ export function wrapInSpan(editedSection) {
 }
 
 /**
- * Finds the differences between the original and edited text.
- * @param {string} originalText The original text.
- * @param {string} editedText The edited text.
- * @returns {Array<Object>} An array of difference objects with start, end, and text properties.
- */
-function findDifferences(originalText, editedText) {
-    let differences = [];
-    let i = 0;
-
-    while (i < originalText.length || i < editedText.length) {
-        let originalChar = originalText[i];
-        let editedChar = editedText[i];
-
-        if (originalChar === editedChar) {
-            i++;
-        } else {
-            let start = i;
-            while (originalChar !== editedChar && i < editedText.length) {
-                i++;
-                originalChar = originalText[i];
-                editedChar = editedText[i];
-            }
-            let editedSection = editedText.slice(start, i);
-            differences.push({start, end: i, text: editedSection});
-        }
-    }
-
-    return differences;
-}
-
-/**
  * Wraps the edited sections of the text in span tags with a 'user-edited' class.
- * @param {string} originalText The original text.
- * @param {string} editedText The edited text.
- * @returns {Promise<string>} A promise that resolves with the text containing wrapped edited sections.
+ *
+ * @param {string} originalText - The original text.
+ * @param {string} editedText - The edited text.
+ * @returns {Promise<string>} - A promise that resolves with the edited text, where edited sections are wrapped in span tags.
  */
 export function wrapEditedSections(originalText, editedText) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
         try {
             let differences = findDifferences(originalText, editedText);
             let wrappedText = editedText;
@@ -97,3 +148,4 @@ export function wrapEditedSections(originalText, editedText) {
         }
     });
 }
+

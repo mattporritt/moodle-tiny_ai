@@ -161,6 +161,23 @@ const hideLoading = (editorId, root, submitBtn) => {
 };
 
 /**
+ * Replace double line breaks with <br> and with </p><p> for paragraphs.
+ *
+ * @param {String} text The text to replace.
+ * @returns {String}
+ */
+const replaceLineBreaks = (text) => {
+    // Replace double line breaks with </p><p> for paragraphs
+    const textWithParagraphs = text.replace(/\n{2,}|\r\n/g, '</p><p>');
+
+    // Replace remaining single line breaks with <br> tags
+    const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br>');
+
+    // Add opening and closing <p> tags to wrap the entire content
+    return `<p>${textWithBreaks}</p>`;
+};
+
+/**
  * Handle the insert action.
  *
  * @param {TinyMCE.editor} editor The tinyMCE editor instance.
@@ -175,14 +192,10 @@ const handleInsert = async(editor, root) => {
     // This is so we can differentiate between the edited sections and the generated content.
     const wrappedEditedResponse = await wrapEditedSections(responseObj.generatedcontent, generatedResponseEl.value);
 
-    // Replace double line breaks with </p><p> for paragraphs
-    const textWithParagraphs = wrappedEditedResponse.replace(/\n{2,}/g, '</p><p>');
+    // Replace double line breaks with <br> and with </p><p> for paragraphs.
+    responseObj.editedtext = replaceLineBreaks(wrappedEditedResponse);
 
-    // Replace remaining single line breaks with <br> tags
-    const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br>');
-
-    // Add opening and closing <p> tags to wrap the entire content
-    responseObj.generatedcontent = `<p>${textWithBreaks}</p>`;
+    window.console.log(responseObj);
 
     // Generate the HTML for the response.
     const formattedResponse = await Templates.render('tiny_ai/insert', responseObj);
