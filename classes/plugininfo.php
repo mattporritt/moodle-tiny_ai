@@ -32,6 +32,16 @@ use editor_tiny\plugin_with_configuration;
 
 class plugininfo extends plugin implements plugin_with_configuration, plugin_with_buttons {
 
+    public static function is_enabled(
+            context $context,
+            array $options,
+            array $fpoptions,
+            ?\editor_tiny\editor $editor = null
+    ): bool {
+        // Users must have permission to generate AI content.
+        return has_capability('tiny/ai:use', $context);
+    }
+
     /**
      * Get a list of the buttons provided by this plugin.
      *

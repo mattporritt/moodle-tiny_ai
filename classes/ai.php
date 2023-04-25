@@ -100,19 +100,20 @@ class ai {
         $requestjson = json_encode($this->generate_request_object($prompttext));
 
         // Call the AI service.
-        $response = $this->client->request('POST', '', [
-            'body' => $requestjson,
-        ]);
-
-        $responsebody = $response->getBody();
-        $bodyobj = json_decode($responsebody->getContents());
+        //$response = $this->client->request('POST', '', [
+        //    'body' => $requestjson,
+        //]);
+        //
+        //$responsebody = $response->getBody();
+        //$bodyobj = json_decode($responsebody->getContents());
 
         $responseobj = new \stdClass();
         $responseobj->prompttext = $prompttext;
         $responseobj->model = $this->model;
         $responseobj->personality = $this->personality;
         $responseobj->generateddate = time();
-        $responseobj->generatedcontent = $bodyobj->choices[0]->message->content;
+        //$responseobj->generatedcontent = $bodyobj->choices[0]->message->content;
+        $responseobj->generatedcontent = "This is a test \n response from the \n\n AI service.";
 
         return $responseobj;
     }
