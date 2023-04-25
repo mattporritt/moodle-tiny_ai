@@ -28,6 +28,7 @@ import {getContextId} from 'tiny_ai/options';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import {wrapEditedSections} from 'tiny_ai/textmark';
+import {displayMessages} from 'tiny_ai/loading';
 
 let responseObj = null;
 
@@ -75,7 +76,6 @@ export const displayModal = async(editor) => {
  * @returns {Object}
  */
 const getTemplateContext = (editor) => {
-
     return {
         elementid: editor.id,
     };
@@ -133,7 +133,9 @@ const displayLoading = (editorId, root, submitBtn) => {
     const loadingSpinnerDiv = root.querySelector('#' + editorId + "_tiny_ai_spinner");
     const overlayDiv = root.querySelector('#' + editorId + '_tiny_ai_overlay');
     const blurDiv = root.querySelector('#' + editorId + '_tiny_ai_blur');
+    const loadingTextDiv = root.querySelector('#' + editorId + "_tiny_ai_loading_text");
 
+    displayMessages(loadingTextDiv);
     loadingSpinnerDiv.classList.remove('hidden');
     overlayDiv.classList.remove('hidden');
     blurDiv.classList.add('tiny-ai-blur');

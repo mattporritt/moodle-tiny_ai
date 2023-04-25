@@ -28,3 +28,9 @@
     color: #0f6cbf;
     z-index: 1000;
 }
+
+.tiny-ai-spinner-text-style {
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 1000;
+}
