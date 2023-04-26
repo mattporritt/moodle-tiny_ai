@@ -81,9 +81,11 @@
                 data-action="cancel">
             {{#str}} cancel, moodle {{/str}}
         </button>
-        <button type="button"
+        <button id="{{elementid}}_tiny_ai_generatebutton"
+                type="button"
                 class="btn btn-primary"
-                data-action="generate">
+                data-action="generate"
+                disabled="disabled">
             {{#str}} generate, tiny_ai{{/str}}
         </button>
         <button id="{{elementid}}_tiny_ai_insertbutton"

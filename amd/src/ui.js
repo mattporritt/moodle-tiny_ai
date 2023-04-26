@@ -28,7 +28,7 @@ import {getContextId} from 'tiny_ai/options';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import {wrapEditedSections} from 'tiny_ai/textmark';
-import {displayMessages} from 'tiny_ai/loading';
+import {loadingMessages} from 'tiny_ai/loading';
 
 let responseObj = null;
 
@@ -52,6 +52,7 @@ export const displayModal = async(editor) => {
         modalObject.destroy();
     });
 
+    // Add the event listener for the button click events.
     root.addEventListener('click', (e) => {
         const submitBtn = e.target.closest('[data-action="generate"]');
         const insertBtn = e.target.closest('[data-action="inserter"]');
@@ -66,6 +67,16 @@ export const displayModal = async(editor) => {
         } else if (cancelBtn) {
             modalObject.destroy();
         }
+    });
+
+    const generateBtn = root.querySelector('#' + editor.id + '_tiny_ai_generatebutton');
+    const promptArea = root.querySelector('#' + editor.id + '_tiny_ai_prompttext');
+
+    // Add the event listener for the prompt text area.
+    promptArea.addEventListener('input', () => {
+        // Enable the generate button if there is text in the prompt area.
+        // Disable the generate button if there is no text in the prompt area.
+        generateBtn.disabled = promptArea.value.trim() === '';
     });
 };
 
@@ -135,7 +146,7 @@ const displayLoading = (editorId, root, submitBtn) => {
     const blurDiv = root.querySelector('#' + editorId + '_tiny_ai_blur');
     const loadingTextDiv = root.querySelector('#' + editorId + "_tiny_ai_loading_text");
 
-    displayMessages(loadingTextDiv);
+    loadingMessages(loadingTextDiv);
     loadingSpinnerDiv.classList.remove('hidden');
     overlayDiv.classList.remove('hidden');
     blurDiv.classList.add('tiny-ai-blur');

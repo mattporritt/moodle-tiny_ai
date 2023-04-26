@@ -31,7 +31,7 @@ import * as coreStr from 'core/str';
  * @param {number} delay The delay between each message in milliseconds.
  * @returns {Promise<function(): void>} A function to stop the message cycling.
  */
-export async function displayMessages(element, delay = 3000) {
+export async function loadingMessages(element, delay = 3000) {
     let stop = false;
 
     /**
@@ -44,16 +44,29 @@ export async function displayMessages(element, delay = 3000) {
     // Retrieve the messages using the async/await pattern.
     const messages = await coreStr.get_strings([
         {
-            key: 'loading',
-            component: 'core',
-        }]);
+            key: 'loading_processing',
+            component: 'tiny_ai',
+        },
+        {
+            key: 'loading_generating',
+            component: 'tiny_ai',
+        },
+        {
+            key: 'loading_applying',
+            component: 'tiny_ai',
+        },
+        {
+            key: 'loading_almostdone',
+            component: 'tiny_ai',
+        }
+    ]);
 
     return new Promise(async(resolve) => {
         for (let i = 0; i < messages.length; i++) {
             if (stop) {
                 break;
             }
-            window.console.log(messages[i]);
+
             element.textContent = messages[i];
             await new Promise((r) => setTimeout(r, delay));
         }
