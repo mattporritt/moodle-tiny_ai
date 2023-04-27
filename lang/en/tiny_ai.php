@@ -31,6 +31,7 @@ $string['apikey'] = 'OpenAI API key';
 $string['apikey_desc'] = 'Enter your OpenAI API key. You can get one from https://platform.openai.com/account/api-keys';
 $string['buttontitle'] = 'Add AI content';
 $string['cachedef_user_rate'] = 'Cache to Tiny AI Plugin rate limiting information.';
+$string['cachedef_request_temperature']= 'Cache to Tiny AI Plugin request temperature.';
 $string['generate'] = 'Generate';
 $string['generating'] = 'Generating...';
 $string['insert'] = 'Insert';

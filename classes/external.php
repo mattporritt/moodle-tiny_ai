@@ -64,7 +64,7 @@ class external extends external_api {
      * @since  Moodle 4.2
      * @param int $contextid The context ID.
      * @param string $prompttext The data encoded as a json array.
-     * @return string
+     * @return array The generated content.
      */
     public static function generate_content(int $contextid, string $prompttext): array {
         \core\session\manager::write_close(); // Close session early this is a read op.
@@ -86,14 +86,14 @@ class external extends external_api {
 
         // Execute API call.
         $ai = new \tiny_ai\ai();
-        return (array)$ai->generate_content($prompttext);
+        return $ai->generate_content($prompttext, $contextid);
     }
 
     /**
      * Generate content return value.
      *
      * @since  Moodle 4.2
-     * @return external_single_structure
+     * @return external_function_parameters
      */
     public static function generate_content_returns(): external_function_parameters {
         return new external_function_parameters([

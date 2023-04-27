@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_ai';
-$plugin->release = '2023042500';
-$plugin->version = 2023042500;
+$plugin->release = '2023042701';
+$plugin->version = 2023042701;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;

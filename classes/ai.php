@@ -62,6 +62,9 @@ class ai {
     // AI personality.
     private string $personality;
 
+    // AI temperature. Between 0 and 2.
+    private float $temperature = 0.2;
+
     /**
      * Class constructor.
      */
@@ -87,14 +90,37 @@ class ai {
      * Generate content from the AI service.
      *
      * @param string $prompttext The prompt text.
+     * @param int $contextid The context id.
      * @param ?http_client $client The http client.
-     * @return \stdClass The generated content.
+     * @return array The generated content.
      */
-    public function generate_content(string $prompttext, ?http_client $client = null): \stdClass {
+    public function generate_content(string $prompttext, int $contextid, ?http_client $client = null): array {
+        global $USER;
+
         // Allow for dependency injection of http client.
         if ($client) {
             $this->client = $client;
         }
+
+        // Set up the cache API for the Tiny AI Plugin.
+        $cache = \cache::make('tiny_ai', 'request_cache');
+        $cachekeystr = $prompttext . (string)$contextid . (string)$USER->id;
+        $cachekey = hash_pbkdf2('sha3-256', $cachekeystr, 'tiny_ai', 1);
+
+        // Check cache for existing response.
+        // If response is a hit then a response has already been generated for this prompt,
+        // and we increase the temperature to generate a new response.
+        if ($cache->get($cachekey)) {
+            $this->temperature = $cache->get($cachekey) + 0.1;
+        }
+
+        // Max allowed temperature is 2.
+        if ($this->temperature > 2) {
+            $this->temperature = 2;
+        }
+
+        // Update the cache.
+        $cache->set($cachekey, $this->temperature);
 
         // Create the AI request object.
         $requestjson = json_encode($this->generate_request_object($prompttext));
@@ -107,15 +133,17 @@ class ai {
         //$responsebody = $response->getBody();
         //$bodyobj = json_decode($responsebody->getContents());
 
-        $responseobj = new \stdClass();
-        $responseobj->prompttext = $prompttext;
-        $responseobj->model = $this->model;
-        $responseobj->personality = $this->personality;
-        $responseobj->generateddate = time();
-        //$responseobj->generatedcontent = $bodyobj->choices[0]->message->content;
-        $responseobj->generatedcontent = "This is a test \n response from the \n\n AI service.";
+         $responsearr = [
+             'prompttext' => $prompttext,
+             'model' => $this->model,
+             'personality' => $this->personality,
+             'generateddate' => time(),
+             'generatedcontent' => "This is a test \n response from the \n\n AI service.",
+         ];
 
-        return $responseobj;
+        // $responsearr->generatedcontent = $bodyobj->choices[0]->message->content;
+
+        return  $responsearr;
     }
 
     /**
@@ -135,6 +163,7 @@ class ai {
 
         $requestobj = new \stdClass();
         $requestobj->model = $this->model;
+        $requestobj->temperature = $this->temperature;
         $requestobj->messages = [$systemobj, $userobj];
 
         return $requestobj;

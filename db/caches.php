@@ -23,10 +23,16 @@
  */
 
 $definitions = array(
-        'user_rate' => array(
-                'mode' => cache_store::MODE_APPLICATION,
-                'simplekeys' => true, // We use user ID as a simple key.
-                'simpledata' => true, // Integer values can be treated as simple data.
-                'ttl' => 3600, // Time to live in seconds (optional, adjust as needed).
-        ),
+    'user_rate' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // We use user ID as a simple key.
+        'simpledata' => true, // Integer values can be treated as simple data.
+        'ttl' => 3600, // Time to live in seconds.
+    ),
+    'request_temperature' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // Hash can be used as a simple key.
+        'simpledata' => true, // Integer values can be treated as simple data.
+        'ttl' => 3600, // Time to live in seconds.
+    ),
 );
