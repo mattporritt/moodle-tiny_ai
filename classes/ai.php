@@ -63,7 +63,7 @@ class ai {
     private string $personality;
 
     // AI temperature. Between 0 and 2.
-    private float $temperature = 0.2;
+    private float $temperature = 0.3;
 
     /**
      * Class constructor.
@@ -103,7 +103,7 @@ class ai {
         }
 
         // Set up the cache API for the Tiny AI Plugin.
-        $cache = \cache::make('tiny_ai', 'request_cache');
+        $cache = \cache::make('tiny_ai', 'request_temperature');
         $cachekeystr = $prompttext . (string)$contextid . (string)$USER->id;
         $cachekey = hash_pbkdf2('sha3-256', $cachekeystr, 'tiny_ai', 1);
 
