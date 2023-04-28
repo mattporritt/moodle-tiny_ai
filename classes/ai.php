@@ -25,6 +25,7 @@
 namespace tiny_ai;
 
 use core\http_client;
+use tiny_ai\ratelimiter;
 
 /**
  * Process AI API calls and generate content responses.
@@ -102,25 +103,17 @@ class ai {
             $this->client = $client;
         }
 
-        // Set up the cache API for the Tiny AI Plugin.
-        $cache = \cache::make('tiny_ai', 'request_temperature');
-        $cachekeystr = $prompttext . (string)$contextid . (string)$USER->id;
-        $cachekey = hash_pbkdf2('sha3-256', $cachekeystr, 'tiny_ai', 1);
-
-        // Check cache for existing response.
-        // If response is a hit then a response has already been generated for this prompt,
-        // and we increase the temperature to generate a new response.
-        if ($cache->get($cachekey)) {
-            $this->temperature = $cache->get($cachekey) + 0.1;
+        // Check rate limiting for user before continuing.
+        // If rate limit is exceeded, return an error response.
+        if (!ratelimiter::is_request_allowed($USER->id)){
+            return [
+                'errorcode' => 429,
+                'error' => 'User rate limit exceeded.',
+            ];
         }
 
-        // Max allowed temperature is 2.
-        if ($this->temperature > 2) {
-            $this->temperature = 2;
-        }
-
-        // Update the cache.
-        $cache->set($cachekey, $this->temperature);
+        // Update temperature.
+        $this->update_temperature($prompttext, $contextid, $USER->id);
 
         // Create the AI request object.
         $requestjson = json_encode($this->generate_request_object($prompttext));
@@ -167,5 +160,35 @@ class ai {
         $requestobj->messages = [$systemobj, $userobj];
 
         return $requestobj;
+    }
+
+    /**
+     * Get the current temperature for the AI service.
+     *
+     * @param string $prompttext The prompt text.
+     * @param int $contextid The context id.
+     * @param int $userid The user id.
+     * @return void
+     */
+    private function update_temperature(string $prompttext, int $contextid, int $userid): void {
+        // Set up the cache API for the Tiny AI Plugin.
+        $cache = \cache::make('tiny_ai', 'request_temperature');
+        $cachekeystr = $prompttext . (string)$contextid . (string)$userid;
+        $cachekey = hash_pbkdf2('sha3-256', $cachekeystr, 'tiny_ai', 1);
+
+        // Check cache for existing response.
+        // If response is a hit then a response has already been generated for this prompt,
+        // and we increase the temperature to generate a new response.
+        if ($cache->get($cachekey)) {
+            $this->temperature = $cache->get($cachekey) + 0.1;
+        }
+
+        // Max allowed temperature is 2.
+        if ($this->temperature > 2) {
+            $this->temperature = 2;
+        }
+
+        // Update the cache.
+        $cache->set($cachekey, $this->temperature);
     }
 }

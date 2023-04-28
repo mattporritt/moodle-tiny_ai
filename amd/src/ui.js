@@ -181,10 +181,10 @@ const hideLoading = (editorId, root, submitBtn) => {
  */
 const replaceLineBreaks = (text) => {
     // Replace double line breaks with </p><p> for paragraphs
-    const textWithParagraphs = text.replace(/\n{2,}|\r\n/g, '</p><p>');
+    const textWithParagraphs = text.replace(/\n{2,}|\r\n/g, '<br/><br/>');
 
     // Replace remaining single line breaks with <br> tags
-    const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br>');
+    const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br/>');
 
     // Add opening and closing <p> tags to wrap the entire content
     return `<p>${textWithBreaks}</p>`;
