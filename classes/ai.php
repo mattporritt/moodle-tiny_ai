@@ -25,7 +25,6 @@
 namespace tiny_ai;
 
 use core\http_client;
-use tiny_ai\ratelimiter;
 
 /**
  * Process AI API calls and generate content responses.
@@ -115,28 +114,14 @@ class ai {
         // Update temperature.
         $this->update_temperature($prompttext, $contextid, $USER->id);
 
-        // Create the AI request object.
-        $requestjson = json_encode($this->generate_request_object($prompttext));
+        // Get request object.
+        $requestobj = $this->generate_request_object($prompttext);
 
-        // Call the AI service.
-        //$response = $this->client->request('POST', '', [
-        //    'body' => $requestjson,
-        //]);
-        //
-        //$responsebody = $response->getBody();
-        //$bodyobj = json_decode($responsebody->getContents());
+        // Get response from AI service.
+        $responsearr = $this->query_ai_api($requestobj);
+        $responsearr['prompttext'] = $prompttext;
 
-         $responsearr = [
-             'prompttext' => $prompttext,
-             'model' => $this->model,
-             'personality' => $this->personality,
-             'generateddate' => time(),
-             'generatedcontent' => "This is a test \n response from the \n\n AI service.",
-         ];
-
-        // $responsearr->generatedcontent = $bodyobj->choices[0]->message->content;
-
-        return  $responsearr;
+        return $responsearr;
     }
 
     /**
@@ -190,5 +175,33 @@ class ai {
 
         // Update the cache.
         $cache->set($cachekey, $this->temperature);
+    }
+
+    /**
+     * Query the AI service.
+     *
+     * @param \stdClass $requestobj The request object.
+     * @return array The response from the AI service.
+     */
+    private function query_ai_api(\stdClass $requestobj): array {
+        // Create the AI request object.
+        $requestjson = json_encode($requestobj);
+
+        // Call the AI service.
+        $response = $this->client->request('POST', '', [
+                'body' => $requestjson,
+        ]);
+
+        // Handle the various response codes.
+
+        $responsebody = $response->getBody();
+        $bodyobj = json_decode($responsebody->getContents());
+
+        return [
+                'model' => $this->model,
+                'personality' => $this->personality,
+                'generateddate' => time(),
+                'generatedcontent' => $bodyobj->choices[0]->message->content,
+        ];
     }
 }

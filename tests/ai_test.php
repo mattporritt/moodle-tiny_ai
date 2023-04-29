@@ -14,7 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tiny_ai;
+use core\http_client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use tiny_ai\ai;
 
 /**
  * Unit tests for the ai class in the tiny_ai plugin.
@@ -36,8 +40,14 @@ class ai_test extends \advanced_testcase {
      */
     public function test_generate_content() {
         $prompttext = 'Provide a brief introduction to a cloud computing course.';
-        set_config('apikey', '', 'tiny_ai');
-        set_config('orgid', '', 'tiny_ai');
+        set_config('apikey', 'abc123', 'tiny_ai');
+        set_config('orgid', 'abc123', 'tiny_ai');
+
+        $mock = new MockHandler([
+                new Response(200,),
+                new Response()
+        ]);
+        $client = new \core\http_client(['mock' => $mock]);
 
         $ai = new ai();
         $result = $ai->generate_content($prompttext);
