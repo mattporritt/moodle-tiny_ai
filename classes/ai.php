@@ -91,16 +91,11 @@ class ai {
      *
      * @param string $prompttext The prompt text.
      * @param int $contextid The context id.
-     * @param ?http_client $client The http client.
      * @return array The generated content.
      */
-    public function generate_content(string $prompttext, int $contextid, ?http_client $client = null): array {
+    public function generate_content(string $prompttext, int $contextid): array {
         global $USER;
 
-        // Allow for dependency injection of http client.
-        if ($client) {
-            $this->client = $client;
-        }
 
         // Check rate limiting for user before continuing.
         // If rate limit is exceeded, return an error response.
@@ -119,7 +114,9 @@ class ai {
 
         // Get response from AI service.
         $responsearr = $this->query_ai_api($requestobj);
-        $responsearr['prompttext'] = $prompttext;
+        if (!isset($responsearr['errorcode'])) {
+            $responsearr['prompttext'] = $prompttext;
+        }
 
         return $responsearr;
     }
@@ -182,26 +179,77 @@ class ai {
      *
      * @param \stdClass $requestobj The request object.
      * @return array The response from the AI service.
+     * @param ?http_client $client The http client.
      */
-    private function query_ai_api(\stdClass $requestobj): array {
+    private function query_ai_api(\stdClass $requestobj, ?http_client $client = null): array {
+        // Allow for dependency injection of http client.
+        if ($client) {
+            $this->client = $client;
+        }
+
         // Create the AI request object.
         $requestjson = json_encode($requestobj);
 
-        // Call the AI service.
+        // Call the external AI service.
         $response = $this->client->request('POST', '', [
                 'body' => $requestjson,
         ]);
 
         // Handle the various response codes.
+        $status = $response->getStatusCode();
+        if ($status == 200) {
+            return $this->handle_api_success($response);
+        } else {
+            return $this->handle_api_error($status, $response);
+        }
+    }
 
+    /**
+     * Handle an error from the external AI api.
+     *
+     * @param int $status The status code.
+     * @param \GuzzleHttp\Psr7\Response $response The response object.
+     * @return array The error response.
+     */
+    private function handle_api_error(int $status, \GuzzleHttp\Psr7\Response $response): array {
+
+        if ($status == 500) {
+            $responsearr = [
+                'errorcode' => $status,
+                'error' => 'Internal server error.',
+            ];
+        } else if ($status == 503) {
+            $responsearr = [
+                'errorcode' => $status,
+                'error' => 'Service unavailable.',
+            ];
+        } else {
+            $responsebody = $response->getBody();
+            $bodyobj = json_decode($responsebody->getContents());
+            $responsearr =[
+                'errorcode' => $status,
+                'error' => $bodyobj->error->message,
+            ];
+        }
+
+        return $responsearr;
+    }
+
+    /**
+     * Handle a successful response from the external AI api.
+     *
+     * @param \GuzzleHttp\Psr7\Response $response The response object.
+     * @return array The response.
+     */
+    private function handle_api_success(\GuzzleHttp\Psr7\Response $response): array {
         $responsebody = $response->getBody();
         $bodyobj = json_decode($responsebody->getContents());
 
         return [
-                'model' => $this->model,
-                'personality' => $this->personality,
-                'generateddate' => time(),
-                'generatedcontent' => $bodyobj->choices[0]->message->content,
+            'model' => $this->model,
+            'personality' => $this->personality,
+            'generateddate' => time(),
+            'generatedcontent' => $bodyobj->choices[0]->message->content,
         ];
     }
 }

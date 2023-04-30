@@ -112,6 +112,12 @@ class external extends external_api {
                 'generatedcontent' => new external_value(
                         PARAM_RAW,
                         'AI generated content'),
+                'errorcode' => new external_value(
+                        PARAM_INT,
+                        'Error code if any'),
+                'error' => new external_value(
+                        PARAM_TEXT,
+                        'Error message if any'),
         ]);
     }
 }
