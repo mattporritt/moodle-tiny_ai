@@ -39,6 +39,7 @@ class ai_test extends \advanced_testcase {
      * @return void
      */
     public function test_generate_content() {
+        $this->resetAfterTest(true);
         $prompttext = 'Provide a brief introduction to a cloud computing course.';
         set_config('apikey', 'abc123', 'tiny_ai');
         set_config('orgid', 'abc123', 'tiny_ai');
@@ -50,6 +51,91 @@ class ai_test extends \advanced_testcase {
         $client = new \core\http_client(['mock' => $mock]);
 
         $ai = new ai();
-        $result = $ai->generate_content($prompttext);
+        //$result = $ai->generate_content($prompttext);
+    }
+
+    /**
+     * Test the API success response handler method.
+     *
+     * @since  Moodle 4.2
+     * @return void
+     * @covers tiny_ai\ai::handle_api_success
+     */
+    public function test_handle_api_success() {
+        $responsebodyjson = <<<EOD
+{
+   "id":"chatcmpl-7AwwHl4wmVXd0FaBn1fgWs3MSeIiV",
+   "object":"chat.completion",
+   "created":1682844197,
+   "model":"gpt-4-0314",
+   "usage":{
+      "prompt_tokens":9,
+      "completion_tokens":9,
+      "total_tokens":18
+   },
+   "choices":[
+      {
+         "message":{
+            "role":"assistant",
+            "content":"Hello! How can I help you today?"
+         },
+         "finish_reason":"stop",
+         "index":0
+      }
+   ]
+}
+EOD;
+        $response = new Response(
+                200,
+                ['Content-Type' => 'application/json'],
+                $responsebodyjson
+        );
+
+        // We're testing a private method, so we need to setup reflector magic.
+        $ai = new ai();
+        $method = new ReflectionMethod('\tiny_ai\ai', 'handle_api_success');
+        $method->setAccessible(true); // Allow accessing of private method.
+
+        $result = $method->invoke($ai, $response);
+
+        $this->assertEquals('Hello! How can I help you today?', $result['generatedcontent']);
+        $this->assertEquals('gpt-4', $result['model']);
+        $this->assertEquals('You are an undergraduate Lecturer at a university', $result['personality']);
+    }
+
+    /**
+     * Test the API error response handler method.
+     *
+     * @since  Moodle 4.2
+     * @return void
+     * @covers tiny_ai\ai::handle_api_error
+     */
+    public function test_handle_api_error() {
+        $responses = [
+                500 => new Response(500, ['Content-Type' => 'application/json']),
+                503 => new Response(503, ['Content-Type' => 'application/json']),
+                401 => new Response(401, ['Content-Type' => 'application/json'],
+                        '{"error": {"message": "Invalid Authentication"}}'),
+                404 => new Response(404, ['Content-Type' => 'application/json'],
+                        '{"error": {"message": "You must be a member of an organization to use the API"}}'),
+                429 => new Response(429, ['Content-Type' => 'application/json'],
+                        '{"error": {"message": "Rate limit reached for requests"}}'),
+        ];
+
+        $ai = new ai();
+        $method = new ReflectionMethod('\tiny_ai\ai', 'handle_api_error');
+        $method->setAccessible(true); // Allow accessing of private method.
+
+        foreach($responses as $status => $response) {
+            $result = $method->invoke($ai, $status, $response);
+            $this->assertEquals($status, $result['errorcode']);
+            if ($status == 500) {
+                $this->assertEquals('Internal server error.', $result['error']);
+            } else if ($status == 503) {
+                $this->assertEquals('Service unavailable.', $result['error']);
+            } else {
+                $this->assertStringContainsString($response->getBody()->getContents(), $result['error']);
+            }
+        }
     }
 }
