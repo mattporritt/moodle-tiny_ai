@@ -31,7 +31,7 @@ import * as coreStr from 'core/str';
  * @param {number} delay The delay between each message in milliseconds.
  * @returns {Promise<function(): void>} A function to stop the message cycling.
  */
-export async function loadingMessages(element, delay = 3000) {
+export async function loadingMessages(element, delay = 6000) {
     let stop = false;
 
     /**

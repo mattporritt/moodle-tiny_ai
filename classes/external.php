@@ -99,25 +99,32 @@ class external extends external_api {
         return new external_function_parameters([
                 'prompttext' => new external_value(
                         PARAM_RAW,
-                        'Original prompt text'),
+                        'Original prompt text',
+                        VALUE_OPTIONAL),
                 'model' => new external_value(
                         PARAM_ALPHANUMEXT,
-                        'AI model used'),
+                        'AI model used',
+                        VALUE_OPTIONAL),
                 'personality' => new external_value(
                         PARAM_TEXT,
-                        'AI personality used'),
+                        'AI personality used',
+                        VALUE_OPTIONAL),
                 'generateddate' => new external_value(
                         PARAM_INT,
-                        'Date AI content was generated'),
+                        'Date AI content was generated',
+                        VALUE_OPTIONAL),
                 'generatedcontent' => new external_value(
                         PARAM_RAW,
-                        'AI generated content'),
+                        'AI generated content',
+                        VALUE_OPTIONAL),
                 'errorcode' => new external_value(
                         PARAM_INT,
-                        'Error code if any'),
+                        'Error code if any',
+                        VALUE_OPTIONAL),
                 'error' => new external_value(
                         PARAM_TEXT,
-                        'Error message if any'),
+                        'Error message if any',
+                VALUE_OPTIONAL)
         ]);
     }
 }
